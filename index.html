@@ -124,7 +124,6 @@ function setLang(lang) {
         document.getElementById("inputWord").placeholder = "输入单词";
     }
 }
-
 function speakLetter(letterName) {
     const mapa = {
         "a": "a", "bê": "b", "cê": "c", "dê": "d", "e": "e",
@@ -153,7 +152,6 @@ function fallbackSpeak(text) {
         window.speechSynthesis.speak(utterance);
     }
 }
-
 const alphabet = [
     ["A","a"],["B","bê"],["C","cê"],["D","dê"],["E","e"],
     ["F","efe"],["G","gê"],["H","agá"],["I","i"],["J","jota"],
