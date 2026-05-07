@@ -47,6 +47,7 @@ input { padding:10px; width:100%; margin-top:10px; box-sizing:border-box; border
 
 <div class="card">
 <h2 id="listenTitle">👂 听力练习</h2>
+<p id="listenInstructions">选择你听到的单词：</p>
 <p><strong>casa</strong> <button class="main" onclick="speakWord('casa')">🔊</button></p>
 <div class="option" onclick="check(this,true)">casa</div>
 <div class="option" onclick="check(this,false)">cosa</div>
@@ -58,6 +59,18 @@ input { padding:10px; width:100%; margin-top:10px; box-sizing:border-box; border
 <p><strong>bolo</strong> <button class="main" onclick="speakWord('bolo')">🔊</button></p>
 <div class="option" onclick="check(this,true)">bolo</div>
 <div class="option" onclick="check(this,false)">balo</div>
+</div>
+
+<div class="card">
+<h2 id="rlTitle">🔊 R 和 L 区别</h2>
+<p id="rlInstructions">区分 R 和 L 的声音：</p>
+<p><strong>rato</strong> <button class="main" onclick="speakWord('rato')">🔊</button></p>
+<div class="option" onclick="check(this,true)">rato</div>
+<div class="option" onclick="check(this,false)">lato</div>
+<hr>
+<p><strong>rua</strong> <button class="main" onclick="speakWord('rua')">🔊</button></p>
+<div class="option" onclick="check(this,true)">rua</div>
+<div class="option" onclick="check(this,false)">lua</div>
 </div>
 
 <div class="card">
@@ -85,6 +98,9 @@ function setLang(lang) {
         document.getElementById("gameText").innerText = "Listen and choose the correct letter:";
         document.getElementById("playBtnText").innerText = "Play";
         document.getElementById("listenTitle").innerText = "👂 Listening Practice";
+        document.getElementById("listenInstructions").innerText = "Choose the word you hear:";
+        document.getElementById("rlTitle").innerText = "🔊 R vs L";
+        document.getElementById("rlInstructions").innerText = "Distinguish between R and L sounds:";
         document.getElementById("writeTitle").innerText = "✍️ Spelling Practice";
         document.getElementById("writeText").innerText = "Listen and type the word:";
         document.getElementById("speakBtnText").innerText = "Play";
@@ -98,6 +114,9 @@ function setLang(lang) {
         document.getElementById("gameText").innerText = "听声音并选择正确的字母：";
         document.getElementById("playBtnText").innerText = "播放";
         document.getElementById("listenTitle").innerText = "👂 听力练习";
+        document.getElementById("listenInstructions").innerText = "选择你听到的单词：";
+        document.getElementById("rlTitle").innerText = "🔊 R 和 L 区别";
+        document.getElementById("rlInstructions").innerText = "区分 R 和 L 的声音：";
         document.getElementById("writeTitle").innerText = "✍️ 拼写练习";
         document.getElementById("writeText").innerText = "听音并输入：";
         document.getElementById("speakBtnText").innerText = "播放";
@@ -106,7 +125,6 @@ function setLang(lang) {
     }
 }
 
-// CORRIGIDO: procura arquivos como a.mp3, b.mp3, etc.
 function speakLetter(letterName) {
     const mapa = {
         "a": "a", "bê": "b", "cê": "c", "dê": "d", "e": "e",
@@ -115,39 +133,27 @@ function speakLetter(letterName) {
         "pê": "p", "quê": "q", "érre": "r", "ésse": "s", "tê": "t",
         "u": "u", "vê": "v", "dáblio": "w", "xis": "x", "ípsilon": "y", "zê": "z"
     };
-    
     let letra = mapa[letterName];
-    if (!letra) {
-        console.log("Letra não mapeada:", letterName);
-        return;
-    }
-    
+    if (!letra) return;
     let audio = new Audio(`${letra}.mp3`);
-    console.log("Tentando tocar:", `${letra}.mp3`);
-    
-    audio.play().catch(err => {
-        console.log("Erro:", err);
-        // Fallback para voz do navegador
-        if ('speechSynthesis' in window) {
-            let utterance = new SpeechSynthesisUtterance(letterName);
-            utterance.lang = 'pt-BR';
-            window.speechSynthesis.speak(utterance);
-        }
-    });
+    audio.play().catch(() => fallbackSpeak(letterName));
 }
 
 function speakWord(word) {
     let audio = new Audio(`${word}.mp3`);
-    audio.play().catch(() => {
-        if ('speechSynthesis' in window) {
-            let utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'pt-BR';
-            window.speechSynthesis.speak(utterance);
-        }
-    });
+    audio.play().catch(() => fallbackSpeak(word));
 }
 
-// Alfabeto
+function fallbackSpeak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
 const alphabet = [
     ["A","a"],["B","bê"],["C","cê"],["D","dê"],["E","e"],
     ["F","efe"],["G","gê"],["H","agá"],["I","i"],["J","jota"],
@@ -179,7 +185,6 @@ function generateOptions(correct) {
         if(!opts.includes(r)) opts.push(r);
     }
     opts.sort(() => Math.random() - 0.5);
-    
     opts.forEach(l => {
         let d = document.createElement("div");
         d.className = "option";
