@@ -147,19 +147,12 @@ function speakLetter(letterName) {
     let audio = new Audio(`${letra}.mp3`);
     audio.play().catch(() => fallbackSpeak(letterName));
 }
-
 function speakWord(word) {
     let audio = new Audio(`${word}.mp3`);
-    audio.play().catch(() => fallbackSpeak(word));
+    audio.play().catch(() => {
+        console.log("Áudio não encontrado:", word + ".mp3");
+    });
 }
-
-function fallbackSpeak(text) {
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        let utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'pt-BR';
-        utterance.rate = 0.9;
-        window.speechSynthesis.speak(utterance);
     }
 }
      const alphabet = [
