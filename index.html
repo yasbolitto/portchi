@@ -145,7 +145,7 @@ function speakLetter(letterName) {
     let letra = mapa[letterName];
     if (!letra) return;
     let audio = new Audio(`${letra}.mp3`);
-    audio.play().catch(() => fallbackSpeak(letterName));
+    audio.play().catch(() => console.log("Erro letra:", letra));
 }
 function speakWord(word) {
     let audio = new Audio(`${word}.mp3`);
